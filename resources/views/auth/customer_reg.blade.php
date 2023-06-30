@@ -71,18 +71,18 @@
             </div>
         </div>
 
-        <div id="myModal" class="modal">
+{{--        <div id="myModal" class="modal">--}}
 
 
-            <div class="modal-content">
-                <span class="close"> </span>
-                <div>
-                    <h1>Check your email To verify your account</h1>
-                </div>
+{{--            <div class="modal-content">--}}
+{{--                <span class="close"> </span>--}}
+{{--                <div>--}}
+{{--                    <h1>Check your email To verify your account</h1>--}}
+{{--                </div>--}}
 
 
-            </div>
-        </div>
+{{--            </div>--}}
+{{--        </div>--}}
 
 
     </div>

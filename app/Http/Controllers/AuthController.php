@@ -25,18 +25,20 @@ class AuthController extends Controller
     {
         return view('auth.login');
     }
+    public function showemailpage()
+    {
+        return view('auth.enteremail');
+    }
 
-    public function  processLogin(Request $request){
 
-
-        $credentials =$request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
+    public function processLogin(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
             $user = Auth::user();
-            $remeber=input::get('remeber');
 
             // Authentication successful
-            if ($user->role =='Customer') {
+            if ($user->role == 'Customer') {
                 $request->session()->put('user_id', $user->id);
                 $request->session()->put('user_name', $user->name);
 
@@ -49,12 +51,23 @@ class AuthController extends Controller
             }
             // Customize your logic here, such as redirecting to a dashboard page
             return redirect()->intended('/');
-        }
-        else {
+        } else {
             // Authentication failed
             // Customize your logic here, such as redirecting back with a n error message
             return redirect()->back()->withErrors(['loginError' => 'Invalid login credentials']);
         }
+
+
+    }
+
+    public  function enteremail(Request $request){
+
+//        $user_email = $request->input('email');
+        $userInfo = User::all()->where('email', '=', $request->input('email'))->first();
+        $user_id =$userInfo->id;
+
+        Mail::to($request->input('email'))->send(new verifyEmail($user_id));
+        return redirect('/auth/login');
 
 
 
@@ -95,7 +108,7 @@ class AuthController extends Controller
                     ]);
 
 
-                Mail::to($request->input('email'))->send(new verifyEmail($userID));
+//                Mail::to($request->input('email'))->send(new verifyEmail($userID));
 
 
                 return redirect('/auth/login');
@@ -125,7 +138,7 @@ class AuthController extends Controller
                     ]);
 
 
-                Mail::to($request->input('email'))->send(new verifyEmail($userID));
+//                Mail::to($request->input('email'))->send(new verifyEmail($userID));
 
                 return redirect('/auth/login');
 
@@ -191,21 +204,20 @@ class AuthController extends Controller
 //--------------------------------------------------------------------------------------------------------------
 //password reset
     public
-    function PasswordReset()
+    function PasswordReset($user_id)
     {
 
-        return view('auth.resetpassword');
+        return view('auth.resetpassword', ['user_id' => $user_id]);
     }
+
     public function passwordupdate(Request $request)
     {
-       $newpassword=Hash::make($request->input('new_password'));
-       $user_update=User::all()->where('id', '=',$request->input('user_id'));
+        $newpassword = Hash::make($request->input('new_password'));
+        $user_update = User::all()->where('id', '=', $request->input('user_id'))->first();
         $user_update->password = $newpassword;
         $user_update->email_verified_at = Carbon::now();
         $user_update->update();
-        return redirect()->route('/auth/login')->withErrors(['msg' => 'Password Reset Successfully.']);
-
-//
+        return redirect('/auth/login')->withErrors(['msg' => 'Password Reset Successfully.']);
     }
 
 //----------------------------------------------------------------------------------------------------------------

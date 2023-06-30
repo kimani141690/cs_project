@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FarmerController;
 use App\Http\Controllers\GoogleController;
@@ -19,6 +18,9 @@ use App\Http\Controllers\AuthController;
 |
 */
 
+Route::group(['middleware' => 'disable_back'], function(){
+
+
 Route::get('/', [Routing:: class, 'showIndex'])->name('/');
 
 Route::prefix('auth')->group(function () {
@@ -29,15 +31,14 @@ Route::prefix('auth')->group(function () {
     Route::get('farmer-reg', [AuthController::class, 'registrationTypes']);
     Route::get('verify-email/{token}', [AuthController::class, 'verifyEmail']);
     Route::get('logout', [AuthController::class, 'logout']);
-
-
-
+    Route::get('/resetpassword/{user_id}', [AuthController::class, 'PasswordReset']);
+    Route::get('enteremail', [AuthController::class, 'showemailpage']);
 
     //post routes
     Route::post('/registration', [AuthController::class, 'registration']);
     Route::post('/processLogin', [AuthController::class, 'processLogin']);
-    Route::post('/passwordupdate', [AuthController::class, 'processLogin']);
-
+    Route::post('/resetpassword', [AuthController::class, 'passwordupdate']);
+    Route::post('enteremail/', [AuthController::class, 'enteremail']);
 
 
 
@@ -50,10 +51,6 @@ Route::prefix('customer')->group(function () {
     Route::get('index', [CustomerController::class, 'showindex'])->name('login');
 
 
-
-
-
-
 });
 
 //------------------------------------------------------------------------------------------------------------
@@ -64,14 +61,13 @@ Route::prefix('farmer')->group(function () {
     Route::get('index', [FarmerController::class, 'showindex'])->name('login');
 
 
-
-
-
-
 });
 //-------------------------------
 // Google URL
-Route::prefix('google')->name('google.')->group( function(){
+Route::prefix('google')->name('google.')->group(function () {
     Route::get('login', [GoogleController::class, 'loginWithGoogle'])->name('login');
     Route::any('callback', [GoogleController::class, 'callbackFromGoogle'])->name('callback');
+});
+
+
 });

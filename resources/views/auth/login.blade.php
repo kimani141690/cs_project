@@ -25,7 +25,7 @@
                     </div>
 
                     <div class="w-50" style="margin-top: 30px;">
-                        <input type="checkbox" style="width: 20px;" checked id="remember" name="remeber">
+                        <input type="checkbox" style="width: 20px;" checked id="remember" name="remember">
 
                         <label class="checkbox-wrap checkbox-primary" style="display: flex; align-items:center; ">
                             Remember Me &nbsp; &nbsp;
@@ -35,6 +35,13 @@
                     </div>
 
                 </form>
+                <button class="btn btn--radius btn--green" type="submit" name="btn_reset" style="margin-top:10px;">
+
+
+                <a href="/auth/enteremail"> Reset Password</a>
+
+                   </button>
+
 
                 <div class="w-50" style="margin-top: 30px;">
                     <button class="btn btn--radius btn--green" id="myBtn">Dont' have an account?</button>

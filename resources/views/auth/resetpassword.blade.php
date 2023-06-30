@@ -33,30 +33,26 @@
                 <div class="card-heading"></div>
                 <div class="card-body">
                     <h3 class="title">Reset Password</h3>
-                    <form method="POST" action="/auth/passwordupdate">
+                    <form method="POST" action="/auth/resetpassword">
                         @csrf
-
                         <div>
                             <div>
                                 <div class="input-group">
-                                    <input class="input--style-2" type="email" placeholder="Email " name="email">
-
+                                    <input class="input--style-2" type="password" placeholder="Current Password " name="password">
                                 </div>
                             </div>
-
+-
                         </div>
-
                         <div>
                             <div>
                                 <div class="input-group">
-                                    <input  type="hidden" name="new_password" value="{{$user_id}}">
-
-                                    <input class="input--style-2" type="password" placeholder="Password " minlength="8" name="password">
+                                    <input  type="hidden" name="user_id" value="{{$user_id}}">
+                                    <input class="input--style-2" type="password" placeholder="New Password " minlength="8" name="new_password">
                                 </div>
                             </div>
                         </div>
                         <div class="p-t-30">
-                            <button class="btn btn--radius btn--green" type="submit">SUBMIT</button>
+                            <button class="btn btn--radius btn--green" type="submit">Reset</button>
                         </div>
                     </form>
                 </div>
