@@ -13,4 +13,7 @@ class CustomerController extends Controller
         return view('customer.index');
 
     }
+     public function cust_details(Request $request){
+
+     }
 }

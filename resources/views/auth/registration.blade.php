@@ -34,57 +34,30 @@
         <div class="card card-2">
             <div class="card-heading"></div>
             <div class="card-body">
-                <h4 class="title">Customer Registration Page</h4>
+                <h4 class="title">{{$user_type}} Registration Page</h4>
 
                 <form method="POST" action="/auth/registration">
                     @csrf
                     <div>
                         <div>
                             <div class="input-group">
-                                <input class="input--style-2" type="text" required placeholder="User Name" name="name">
+                                <input class="input--style-2" type="text" required placeholder="User Name" name="username">
                             </div>
                         </div>
                     </div>
-
                     <div class="input-group">
                         <input class="input--style-2" type="email" required autocomplete="off" placeholder="Email"
                                name="email">
                     </div>
-
-
-                    <div>
-                        <div>
-                            <div class="input-group">
-                                <input class="input--style-2" type="text" required placeholder="Contact " minlength="8"
-                                       name="contact">
-                            </div>
-                        </div>
-                    </div>
                     <div class="p-t-30">
-                        <input type="hidden" name="user_type" value="customer">
+                        <input type="hidden" name="user_type" value="{{$user_type}}">
                         <button type="reset" style="color: black" class="btn btn--radius btn--green">Reset</button>
                         <button style="margin-left:85px; " class="btn btn--radius btn--green" type="submit">Register
                         </button>
                     </div>
                 </form>
-
             </div>
         </div>
-
-{{--        <div id="myModal" class="modal">--}}
-
-
-{{--            <div class="modal-content">--}}
-{{--                <span class="close"> </span>--}}
-{{--                <div>--}}
-{{--                    <h1>Check your email To verify your account</h1>--}}
-{{--                </div>--}}
-
-
-{{--            </div>--}}
-{{--        </div>--}}
-
-
     </div>
 </div>
 </body>

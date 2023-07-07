@@ -33,25 +33,26 @@
                 <div class="card-heading"></div>
                 <div class="card-body">
                     <h3 class="title">Reset Password</h3>
-                    <form method="POST" action="/auth/resetpassword">
+                    <form method="POST" action="/auth/reset-password">
                         @csrf
+
                         <div>
                             <div>
                                 <div class="input-group">
-                                    <input class="input--style-2" type="password" placeholder="Current Password " name="password">
+                                    <input class="input--style-2" type="password" id="newpassword" placeholder="New Password " minlength="8">
                                 </div>
                             </div>
--
                         </div>
                         <div>
                             <div>
                                 <div class="input-group">
-                                    <input  type="hidden" name="user_id" value="{{$user_id}}">
-                                    <input class="input--style-2" type="password" placeholder="New Password " minlength="8" name="new_password">
+                                    <input class="input--style-2" type="password" id="confirmpassword" placeholder="Confirm Password " minlength="8" name="new_password">
                                 </div>
                             </div>
                         </div>
+
                         <div class="p-t-30">
+                            <input  type="hidden" name="token" value="{{$token}}">
                             <button class="btn btn--radius btn--green" type="submit">Reset</button>
                         </div>
                     </form>
@@ -61,14 +62,24 @@
     </div>
 
     <!-- Jquery JS-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <!-- Vendor JS-->
-    <script src="vendor/select2/select2.min.js"></script>
+    <scr>
+        <script>
+            $(document).ready(function() {
+                $('#confirmpassword').on('keyup', function() {
+                    var newPassword = $('#newpassword').val();
+                    var confirmPassword = $(this).val();
 
-    <!-- Main JS-->
-    <script src="js/global.js"></script>
+                    if (newPassword !== confirmPassword) {
+                        $('#password-error').text('Passwords do not match');
+                    } else {
+                        $('#password-error').text('');
+                    }
+                });
+            });
+        </script>
 
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+    </scr>
+</body>
 
 </html>
 <!-- end document-->

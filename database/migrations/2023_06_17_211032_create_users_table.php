@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -15,23 +14,21 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('mobile_no')->nullable();
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken()->nullable();
-            $table->timestamps();
-            $table->enum('role', ['Farmer', 'Customer'])->default('Customer');
             $table->bigInteger('farmers_id')->nullable()->unsigned();
             $table->bigInteger('customers_id')->nullable()->unsigned();
+            $table->enum('role', ['Farmer', 'Customer'])->default('Customer');
+            $table->string('username');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->timestamp('email_verified_at')->nullable();
+            $table->enum('account_status', ['activated', 'inactive', 'blocked'])->default('inactive');
+            $table->string('google_id')->nullable();
+            $table->rememberToken();
+            $table->timestamps();
 
             //relationship
             $table->foreign("farmers_id")->references("id")->on("farmers");
             $table->foreign("customers_id")->references("id")->on("customers");
-
-
-
 
 
         });

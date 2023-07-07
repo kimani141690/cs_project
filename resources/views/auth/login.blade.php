@@ -13,7 +13,7 @@
             <div class="card-heading"></div>
             <div class="card-body">
                 <h2 class="title">Login Page</h2>
-                <form method="POST" action="/auth/processLogin" autocomplete="off">
+                <form method="POST" action="/auth/login" autocomplete="off">
                     @csrf
 
                     <div class="input-group">
@@ -38,7 +38,7 @@
                 <button class="btn btn--radius btn--green" type="submit" name="btn_reset" style="margin-top:10px;">
 
 
-                <a href="/auth/enteremail"> Reset Password</a>
+                <a href="/auth/reset"> Reset Password</a>
 
                    </button>
 
@@ -52,20 +52,20 @@
 
                 <div id="myModal" class="modal">
 
-
                     <div class="modal-content">
                         <span class="close"> </span>
                         <div>
                             <h1>Select User Type</h1>
                         </div>
-
                         <div style="display: block; justify-content: space-between;">
                             <button style="padding-bottom: 10px; padding-top: 5px; background-color: #006A4E;">
-                                <a href="/auth/farmer-reg" style="text-decoration: none; color: white; ">Farmer</a>
+                                <a href="{{ route('farmer', ['farmer' => 'farmer']) }}"
+                                   style="text-decoration: none; color: white; ">Farmer</a>
                             </button>
 
                             <button style="padding-bottom: 10px; padding-top: 5px; background-color: #006A4E;">
-                                <a href=" /auth/customer-reg" style="text-decoration: none; color: white; ">Customer</a>
+                                <a href="{{ route('customer', ['customer' => 'customer']) }}"
+                                   style="text-decoration: none; color: white; ">Customer</a>
                             </button>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                 <br>
                 <button class="btn btn--radius btn--green">
                     <a href={{route('google.login')}} style="text-decoration: none; justify-items: center;">Sign In With
-                       <i class="fab fa-google-f fa-fw">Login with google</i>
+                    <i class="fab fa-google-f fa-fw">Login with google</i>
                     </a>
                 </button>
             </div>

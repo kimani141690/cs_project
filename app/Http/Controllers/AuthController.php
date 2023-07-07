@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\RegistrationMail;
+use App\Mail\ResetRequestMail;
 use App\Mail\verifyEmail;
+use App\Models\PasswordReset;
 use App\Models\User;
 use App\Models\VerifyUser;
 use Illuminate\Http\Request;
@@ -18,18 +21,8 @@ use Illuminate\Support\Str;
 class AuthController extends Controller
 {
 
-    //---------------------------------------------------------------------------------------
-    //login
 
-    public function login()
-    {
-        return view('auth.login');
-    }
-    public function showemailpage()
-    {
-        return view('auth.enteremail');
-    }
-
+    //1. login
 
     public function processLogin(Request $request)
     {
@@ -60,29 +53,7 @@ class AuthController extends Controller
 
     }
 
-    public  function enteremail(Request $request){
-
-//        $user_email = $request->input('email');
-        $userInfo = User::all()->where('email', '=', $request->input('email'))->first();
-        $user_id =$userInfo->id;
-
-        Mail::to($request->input('email'))->send(new verifyEmail($user_id));
-        return redirect('/auth/login');
-
-
-
-    }
-
-
-    public function registrationTypes()
-    {
-        if (request()->is('auth/customer-reg')) {
-            return view('auth.customer_reg');
-        } elseif (request()->is('auth/farmer-reg')) {
-            return view('auth.farmer_reg');
-        }
-    }
-
+    //2. registration and respective email verifications and password resets
     public function registration(Request $request)
     {
         $user_type = $request->input('user_type');
@@ -94,28 +65,25 @@ class AuthController extends Controller
                 // Create and save the new user
                 $user = new User();
                 $user->email = $request->input('email');
-                $user->name = $request->input('name');
-                $user->mobile_no = $request->input('contact');
+                $user->username = $request->input('username');
                 $user->role = 'Farmer';
-                $password = $request->input('name') . '_smart_farmer_user';
+                $password = $request->input('username') . '_smart_farmer_user';
                 $user->password = Hash::make($password);
                 $user->save();
                 $userID = DB::getPdo()->lastInsertId();
-                DB::table('Verify_Users')
+                DB::table('password_resets')
                     ->insert([
                         'token' => str::random(60),
                         'user_id' => $userID,
                     ]);
+                Mail::to($request->input('email'))->send(new RegistrationMail($userID));
 
-
-//                Mail::to($request->input('email'))->send(new verifyEmail($userID));
-
-
-                return redirect('/auth/login');
+                return redirect('/auth/login')->withErrors(
+                    ['msg' => 'Registration completed successfully. Kindly Check your email for further instructions']
+                );
 
             } else {
                 return redirect('/auth/login')->with('message', 'An account with that email already exists. Please login to proceed.');
-
             }
         } elseif ($user_type == 'customer') {
 
@@ -123,35 +91,77 @@ class AuthController extends Controller
                 // Create and save the new user
                 $user = new User();
                 $user->email = $request->input('email');
-                $user->name = $request->input('name');
-                $user->mobile_no = $request->input('contact');
+                $user->username = $request->input('username');
                 $user->role = 'Customer';
-                $password = $request->input('name') . '_smart_farmer_user';
+                $password = $request->input('username') . '_smart_farmer_user';
                 $user->password = Hash::make($password);
                 $user->save();
 
                 $userID = DB::getPdo()->lastInsertId();
-                DB::table('Verify_Users')
+                DB::table('password_resets')
                     ->insert([
                         'token' => str::random(60),
                         'user_id' => $userID,
                     ]);
+                Mail::to($request->input('email'))->send(new RegistrationMail($userID));
 
-
-//                Mail::to($request->input('email'))->send(new verifyEmail($userID));
-
-                return redirect('/auth/login');
+                return redirect('/auth/login')->withErrors(
+                    ['msg' => 'Registration completed successfully. Kindly Check your email for further instructions']
+                );
 
             } else {
                 return redirect('/auth/login')->with('message', 'An account with that email already exists. Please login to proceed.');
 
             }
 
+        } else {
+            abort(404);
         }
     }
 
-    public
-    function validatelogin(Request $request)
+    //3. reset passwords
+    //the bellow method is to send an email for when the user request a password reset action
+    public function sendPasswordRequestMail(Request $request)
+    {
+        $userInfo = User::all()->where('email', '=', $request->input('email'))->first();
+        $user_id = $userInfo->id;
+
+        DB::table('password_resets')
+            ->insert([
+                'token' => str::random(60),
+                'user_id' => $userInfo->id,
+            ]);
+        Mail::to($request->input('email'))->send(new ResetRequestMail($user_id));
+        return redirect('/auth/login');
+    }
+
+    //below method is to save passwords. this is universal
+    public function passwordResetAction(Request $request)
+    {
+        $new_password = Hash::make($request->input('new_password'));
+        $token_info = PasswordReset::all()->where('token','=',$request->input('token'))->first();
+        $user_update = User::all()->where('id', '=', $token_info->user_id)->first();
+        DB::table('users')->where('id', $user_update->id)->update(['account_status' => 'activated']);
+
+        $user_update->password = $new_password;
+        $user_update->email_verified_at = Carbon::now();
+        $user_update->update();
+        return redirect('/auth/login')->withErrors(['msg' => 'Password Reset Successfully. Your Account has been activated']);
+    }
+
+    //4. logout
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
+    }
+
+    public function validatelogin(Request $request)
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
 
@@ -181,14 +191,13 @@ class AuthController extends Controller
 
     public function verifyEmail($token)
     {
-        $verifieduser = VerifyUser::where('token', $token)->first();
+        $verifieduser = PasswordReset::where('token', $token)->first();
         if (isset($verifieduser)) {
 
             $user = $verifieduser->user_id;
             if (!$user->email_verified_at) {
                 $user->email_verified_at = carbon::now();
                 $user->save();
-
                 return redirect(route('user.login'))->with('success', 'Your email has been verified');
 
             } else {
@@ -199,38 +208,6 @@ class AuthController extends Controller
 
             return redirect(route('user.login'))->with('error', 'Something went wrong !!');
         }
-    }
-
-//--------------------------------------------------------------------------------------------------------------
-//password reset
-    public
-    function PasswordReset($user_id)
-    {
-
-        return view('auth.resetpassword', ['user_id' => $user_id]);
-    }
-
-    public function passwordupdate(Request $request)
-    {
-        $newpassword = Hash::make($request->input('new_password'));
-        $user_update = User::all()->where('id', '=', $request->input('user_id'))->first();
-        $user_update->password = $newpassword;
-        $user_update->email_verified_at = Carbon::now();
-        $user_update->update();
-        return redirect('/auth/login')->withErrors(['msg' => 'Password Reset Successfully.']);
-    }
-
-//----------------------------------------------------------------------------------------------------------------
-//logout
-    public function logout(Request $request)
-    {
-        Auth::logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return redirect('/');
     }
 
 }

@@ -2,45 +2,39 @@
 
 namespace App\Mail;
 
+use App\Models\PasswordReset;
 use App\Models\User;
 use App\Models\VerifyUser;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class verifyEmail extends Mailable
+class RegistrationMail extends Mailable
 {
     use Queueable, SerializesModels;
-
-    public $user;
-    public $user_password;
-    public $user_email;
-    public $user_id;
-
-    public $token;
-    public $tokenID;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($data)
-    {
-        //
-        $userInfo = User::all()->where('id', '=', $data)->first();
-        $this->user_id =$userInfo->id;
-        $tokenContent = VerifyUser::all()->where('user_id', '=', $userInfo->id)->first();
-        $password=$userInfo->name.'_smart_farmer_user';
-        $this->user = $userInfo->name;
-        $this->user_email = $userInfo->email;
-        $this->user_password = $password;
-        $this->tokenID = $tokenContent->id;
-        $this->token = $tokenContent->token;
+    public $user;
+    public $user_password;
+    public $user_email;
+    public $token;
 
+    public function __construct($UID)
+    {
+        //extracting all the data
+        $user_info = User::all()->where('id', '=', $UID)->first();
+        $tokenContent = PasswordReset::all()->where('user_id', '=', $user_info->id)->first();
+
+        $this->user = $user_info->username;
+        $this->user_email = $user_info->email;
+        $this->user_password = $user_info->username.'_smart_farmer_user';
+        $this->token = $tokenContent->token;
     }
 
     /**
@@ -51,7 +45,7 @@ class verifyEmail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Verify Email',
+            subject: 'Registration Mail',
         );
     }
 
@@ -63,7 +57,7 @@ class verifyEmail extends Mailable
     public function content()
     {
         return new Content(
-            markdown: 'auth.verify_email',
+            markdown: 'emails.registration',
         );
     }
 

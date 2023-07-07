@@ -36,7 +36,7 @@
             <div class="card-body">
                 <h4 class="title">Enter Email to reset password</h4>
 
-                <form method="POST" action="/auth/enteremail">
+                <form method="POST" action="/auth/request-reset">
                     @csrf
 
                     <div class="input-group">

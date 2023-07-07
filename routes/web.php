@@ -18,56 +18,56 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::group(['middleware' => 'disable_back'], function(){
+Route::group(['middleware' => 'disable_back'], function () {
 
 
-Route::get('/', [Routing:: class, 'showIndex'])->name('/');
+    Route::get('/', [Routing:: class, 'showIndex'])->name('/');
 
-Route::prefix('auth')->group(function () {
-    //get routes (to view the files)
-    Route::get('login', [AuthController::class, 'login'])->name('login');
-    Route::get('reset', [AuthController::class, 'PasswordReset']);
-    Route::get('customer-reg', [AuthController::class, 'registrationTypes']);
-    Route::get('farmer-reg', [AuthController::class, 'registrationTypes']);
-    Route::get('verify-email/{token}', [AuthController::class, 'verifyEmail']);
-    Route::get('logout', [AuthController::class, 'logout']);
-    Route::get('/resetpassword/{user_id}', [AuthController::class, 'PasswordReset']);
-    Route::get('enteremail', [AuthController::class, 'showemailpage']);
+    Route::prefix('auth')->group(function () {
+        //get routes (to view the files)
+        //login and registration
+        Route::get('login', [Routing::class, 'accounts'])->name('login');
+        Route::get('customer-reg', [Routing::class, 'accounts'])->name('customer');
+        Route::get('farmer-reg', [Routing::class, 'accounts'])->name('farmer');
 
-    //post routes
-    Route::post('/registration', [AuthController::class, 'registration']);
-    Route::post('/processLogin', [AuthController::class, 'processLogin']);
-    Route::post('/resetpassword', [AuthController::class, 'passwordupdate']);
-    Route::post('enteremail/', [AuthController::class, 'enteremail']);
+        //password resets and verification
+        Route::get('reset', [Routing::class, 'accounts']);
+        Route::get('registration/{token}', [Routing::class, 'fromMailResetRequest'])->name('create_reset');
+        Route::get('request-reset/{token}',[Routing::class,'fromMailResetRequest'])->name('request_reset');
 
+        //post routes
+        Route::post('login', [AuthController::class, 'processLogin']);
+        Route::post('registration', [AuthController::class, 'registration']);
+        Route::post('request-reset',[AuthController::class,'sendPasswordRequestMail']);
+        Route::post('reset-password', [AuthController::class, 'passwordResetAction']);
 
-
-});
+        Route::get('logout', [AuthController::class, 'logout']);
+    });
 //------------------------------------------------------------------------------------------------------------
 //customer routes
 
-Route::prefix('customer')->group(function () {
-    //get routes (to view the files)
-    Route::get('index', [CustomerController::class, 'showindex'])->name('login');
+    Route::prefix('customer')->group(function () {
+        //get routes (to view the files)
+        Route::get('index', [CustomerController::class, 'showindex'])->name('login');
 
 
-});
+    });
 
 //------------------------------------------------------------------------------------------------------------
 //Farmers routes
 
-Route::prefix('farmer')->group(function () {
-    //get routes (to view the files)
-    Route::get('index', [FarmerController::class, 'showindex'])->name('login');
+    Route::prefix('farmer')->group(function () {
+        //get routes (to view the files)
+        Route::get('index', [FarmerController::class, 'showindex'])->name('login');
 
 
-});
+    });
 //-------------------------------
 // Google URL
-Route::prefix('google')->name('google.')->group(function () {
-    Route::get('login', [GoogleController::class, 'loginWithGoogle'])->name('login');
-    Route::any('callback', [GoogleController::class, 'callbackFromGoogle'])->name('callback');
-});
+    Route::prefix('google')->name('google.')->group(function () {
+        Route::get('login', [GoogleController::class, 'loginWithGoogle'])->name('login');
+        Route::any('callback', [GoogleController::class, 'callbackFromGoogle'])->name('callback');
+    });
 
 
 });
