@@ -21,7 +21,8 @@
                     </div>
 
                     <div class="input-group">
-                        <input class="input--style-2" type="password" placeholder="Password " minlength="8" name="password">
+                        <input class="input--style-2" type="password" placeholder="Password " minlength="8"
+                               name="password">
                     </div>
 
                     <div class="w-50" style="margin-top: 30px;">
@@ -37,21 +38,17 @@
                 </form>
                 <button class="btn btn--radius btn--green" type="submit" name="btn_reset" style="margin-top:10px;">
 
+                    <a href="/auth/reset"> Reset Password</a>
 
-                <a href="/auth/reset"> Reset Password</a>
-
-                   </button>
+                </button>
 
 
                 <div class="w-50" style="margin-top: 30px;">
                     <button class="btn btn--radius btn--green" id="myBtn">Dont' have an account?</button>
-                    &nbsp; &nbsp;
-                    {{--<a href="/auth/resetPassword" style="text-decoration: none; color:black;">Forgot password ?</a>--}}
                 </div>
 
 
                 <div id="myModal" class="modal">
-
                     <div class="modal-content">
                         <span class="close"> </span>
                         <div>
@@ -76,7 +73,7 @@
                 <p style="margin-left: 50%;">-or-</p>
                 <br>
                 <button class="btn btn--radius btn--green">
-                    <a href={{route('google.login')}} style="text-decoration: none; justify-items: center;">Sign In With
+                    <a href="{{route('google.login')}}" style="text-decoration: none; justify-items: center;">Sign In With
                     <i class="fab fa-google-f fa-fw">Login with google</i>
                     </a>
                 </button>
@@ -84,7 +81,26 @@
         </div>
     </div>
 </div>
-
+{{--if statement modal--}}
+@if($errors->has('error'))
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close"> </span>
+            <div>
+                <h1>{{ $errors->first('error') }}</h1>
+            </div>
+        </div>
+    </div>
+@elseif($errors->has('msg'))
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close"> </span>
+            <div>
+                <h1>{{ $errors->first('error') }}</h1>
+            </div>
+        </div>
+    </div>
+@endif
 
 <script src="{{ asset('js/registerModal.js') }}"></script>
 

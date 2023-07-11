@@ -10,53 +10,52 @@
 </head>
 <body>
 <h1>Personal Details</h1>
-<form action="submit_profile.php" method="POST">
+<form action="submit_profile.php" method="POST" enctype="multipart/form-data">
     @csrf
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required>
-    <br>
-    <label for="Username">Username:</label>
-    <input type="text" id="username" name="username" required>
-    <br>
+    <h1>Personal details section</h1>
+
     <label for="contact">Contact:</label>
     <input type="text" id="contact" name="contact" required>
     <br>
+    <label for="location"> Location:</label>
+    <input type="text" id="location" name="location" required>
     <br>
+    <label for="address">Address:</label>
+    <input type="text" id="address" name="address" required>
     <label for="profile_photo">Profile photo</label>
     <input type="text" id="profile_photo" name="profile_photo" required>
     <br>
-    <button type="submit">Update</button>
+    <input type="hidden" name="user_id" value="{{ $userId }}"
 
+    <button type="submit">Submit</button>
 </form>
-<h1>Farm Details</h1>
-<form action="submit_profile.php" method="POST">
-    @csrf
-    <label for="farmName">Farm Name:</label>
-    <input type="text" id="farmName" name="farmName" required>
-    <label for="location">Location:</label>
-    <input type="text" id="location" name="location" required>
-    <br>
-    <label for="farmdescription">Farm Description:</label>
-    <input type="text" id="farmdescription" name="farmdescription" required>
-    <br>
-    <br>
-    <label for="numCattle">Number of Cattle:</label>
-    <input type="number" id="numCattle" name="numCattle" required>
-    <br>
-    <div>
-        <h2>select the animal breed(s) you keep</h2>
-        <label for="breed" name=breed>Breed:</label>
 
-        <input type="checkbox" name="breed[]" value="Jersey"> Holstein
-        <input type="checkbox" name="breed[]" value="Guernsey"> Guernsey
-        <input type="checkbox" name="breed[]" value="Ayshire"> Ayshire
-        <input type="checkbox" name="breed[]" value="Freshian"> Freshian
-        <input type="checkbox" name="breed[]" value="Brownswiss"> Brownswiss
+{{--<form action="submit_profile.php" method="POST" enctype="multipart/form-data">--}}
+{{--    @csrf--}}
+{{--    <h1>Farm Details section</h1>--}}
+{{--    <label for="farmName">Farm Name:</label>--}}
+{{--    <input type="text" id="farmName" name="farmName" required>--}}
+{{--    <br>--}}
 
-    </div>
-    <br>
-    <button>Save Farm Details</button>
-</form>
+{{--    <label for="address">Farm Address:</label>--}}
+{{--    <input type="text" id="address" name="address" required>--}}
+{{--    <br>--}}
+{{--    <label for="farmdescription">Farm Description:</label>--}}
+{{--    <textarea name="farmdescription" id="farmdescription" cols="30" rows="10"></textarea>--}}
+
+{{--    <br>--}}
+{{--    <label for="farm_photo">Farm Image</label>--}}
+{{--    <input type="file" id="farm_photo" name="farm_photo" required>--}}
+{{--    <br>--}}
+
+{{--    <label for="profile_photo">Profile photo</label>--}}
+{{--    <input type="file" id="profile_photo" name="profile_photo" required>--}}
+
+{{--    <br>--}}
+{{--    <input type="hidden" name="user_id" value="{{ $userId }}"--}}
+
+{{--    <button>Save Farm Details</button>--}}
+{{--</form>--}}
 
 
 </body>

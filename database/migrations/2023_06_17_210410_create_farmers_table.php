@@ -16,9 +16,11 @@ return new class extends Migration
     {
         Schema::create('farmers', function (Blueprint $table) {
             $table->id();
+            $table->integer('contact')->unique();
+            $table->string('location');
+            $table->string('address');
+            $table->string('profile');
             $table->timestamps();
-            $table->integer( 'contact');
-            $table->string( 'location');
 
         });
 

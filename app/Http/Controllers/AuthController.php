@@ -27,30 +27,47 @@ class AuthController extends Controller
     public function processLogin(Request $request)
     {
         $credentials = $request->only('email', 'password');
+
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $user = Auth::user();
 
-            // Authentication successful
-            if ($user->role == 'Customer') {
-                $request->session()->put('user_id', $user->id);
-                $request->session()->put('user_name', $user->name);
+            if ($user->customers_id === null || $user->farmers_id === null) {
+                if ($user->role == 'Customer') {
+                    return view('/customer/customer_details', ['userId' => $user->id]);
 
-                return redirect()->intended('/customer/index');
-            } elseif ($user->role == 'Farmer') {
-                $request->session()->put('user_id', $user->id);
-                $request->session()->put('user_name', $user->name);
+                } elseif ($user->role == 'Farmer') {
+                    return view('/farmer/farmer_details', ['userId' => $user->id]);
 
-                return redirect()->intended('/farmer/index');
+                }
+            } else {
+
+
+                if ($user->role == 'Customer') {
+                    $request->session()->put('user_id', $user->id);
+                    $request->session()->put('user_name', $user->name);
+                    $request->session()->put('customers_is', $user->customer_id);
+
+
+                    return redirect()->intended('/customer/index');
+
+                } elseif ($user->role == 'Farmer') {
+                    $request->session()->put('user_id', $user->id);
+                    $request->session()->put('user_name', $user->name);
+                    $request->session()->put('farmers_id', $user->farmer_id);
+                    $profile = DB::table('farmers')->select('profile')->where('id', $user->farmer_id)->get();
+                     if ($profile->isNotEmpty()) {
+                        $request->session()->put('profile', $profile[0]->profile);
+                    }
+
+                    return redirect()->intended('/farmer/index');
+                }
+
+                // Customize your logic here, such as redirecting to a dashboard page
+                return redirect()->intended('/');
             }
-            // Customize your logic here, such as redirecting to a dashboard page
-            return redirect()->intended('/');
-        } else {
-            // Authentication failed
-            // Customize your logic here, such as redirecting back with a n error message
-            return redirect()->back()->withErrors(['loginError' => 'Invalid login credentials']);
+
+
         }
-
-
     }
 
     //2. registration and respective email verifications and password resets
@@ -139,7 +156,7 @@ class AuthController extends Controller
     public function passwordResetAction(Request $request)
     {
         $new_password = Hash::make($request->input('new_password'));
-        $token_info = PasswordReset::all()->where('token','=',$request->input('token'))->first();
+        $token_info = PasswordReset::all()->where('token', '=', $request->input('token'))->first();
         $user_update = User::all()->where('id', '=', $token_info->user_id)->first();
         DB::table('users')->where('id', $user_update->id)->update(['account_status' => 'activated']);
 
@@ -159,55 +176,6 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
-    }
-
-    public function validatelogin(Request $request)
-    {
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-
-            if (Auth::user()->email_verified_at == null) {
-                Auth::logout();
-                return redirect(route('user.login'))->with('message', 'please verify your account to continue.');
-
-            }
-            //intened dasboard
-            return redirect(route('index'))->with('success', 'logged in successfully');
-        }
-//        $request->validate([
-//            'email' => 'required',
-//            'password' => 'required',
-//        ]);
-//
-//        $credentials = $request->only('email', 'password');
-//        if (Auth::attempt($credentials)) {
-//            return redirect()->intended('dashboard')
-//                ->with('message', 'Signed in!');
-//        }
-//
-//        return redirect('/login')->with('message', 'Login details are not valid!');
-//    }
-    }
-
-
-    public function verifyEmail($token)
-    {
-        $verifieduser = PasswordReset::where('token', $token)->first();
-        if (isset($verifieduser)) {
-
-            $user = $verifieduser->user_id;
-            if (!$user->email_verified_at) {
-                $user->email_verified_at = carbon::now();
-                $user->save();
-                return redirect(route('user.login'))->with('success', 'Your email has been verified');
-
-            } else {
-
-                return redirect()->back()->with('info', 'Your email has already been verified');
-            }
-        } else {
-
-            return redirect(route('user.login'))->with('error', 'Something went wrong !!');
-        }
     }
 
 }

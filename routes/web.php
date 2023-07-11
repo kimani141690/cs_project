@@ -33,12 +33,12 @@ Route::group(['middleware' => 'disable_back'], function () {
         //password resets and verification
         Route::get('reset', [Routing::class, 'accounts']);
         Route::get('registration/{token}', [Routing::class, 'fromMailResetRequest'])->name('create_reset');
-        Route::get('request-reset/{token}',[Routing::class,'fromMailResetRequest'])->name('request_reset');
+        Route::get('request-reset/{token}', [Routing::class, 'fromMailResetRequest'])->name('request_reset');
 
         //post routes
         Route::post('login', [AuthController::class, 'processLogin']);
         Route::post('registration', [AuthController::class, 'registration']);
-        Route::post('request-reset',[AuthController::class,'sendPasswordRequestMail']);
+        Route::post('request-reset', [AuthController::class, 'sendPasswordRequestMail']);
         Route::post('reset-password', [AuthController::class, 'passwordResetAction']);
 
         Route::get('logout', [AuthController::class, 'logout']);
@@ -48,8 +48,11 @@ Route::group(['middleware' => 'disable_back'], function () {
 
     Route::prefix('customer')->group(function () {
         //get routes (to view the files)
-        Route::get('index', [CustomerController::class, 'showindex'])->name('login');
+        Route::get('index', [CustomerController::class, 'showindex']);
+        Route::get('details', [CustomerController::class, 'showindex'])->name('customer_details');
 
+        //post routes
+        Route::post('cust_details', [CustomerController::class, 'cust_details'])->name('cust_details');
 
     });
 
@@ -58,7 +61,11 @@ Route::group(['middleware' => 'disable_back'], function () {
 
     Route::prefix('farmer')->group(function () {
         //get routes (to view the files)
-        Route::get('index', [FarmerController::class, 'showindex'])->name('login');
+        Route::get('index', [FarmerController::class, 'showindex']);
+        Route::get('details', [FarmerController::class, 'showindex'])->name('farmer_details');
+
+        //post routes
+        Route::post('details', [FarmerController::class, 'farmers_details'])->name('farmers_details');
 
 
     });
