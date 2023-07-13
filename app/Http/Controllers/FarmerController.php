@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Farmer;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 
 class FarmerController extends Controller
 {
@@ -26,7 +27,7 @@ class FarmerController extends Controller
         $farmer = new Farmer();
         $farmer->contact = $request->input('contact');
         $farmer->location = $request->input('location');
-        $farmer->home_address = $request->input('address');
+        $farmer->address = $request->input('address');
         // Handle profile photo upload
         $profilePhotoPath ='';
         if ($request->hasFile('profile_photo')) {
@@ -45,7 +46,7 @@ class FarmerController extends Controller
             ->where('id', $request->input('user_id'))
             ->update(['farmers_id' => $farmer_id]);
 
-        return redirect('login')->with('message','You can know proceed to login');
+        return view('auth.login')->with('message','You can know proceed to login');
     }
 
 }

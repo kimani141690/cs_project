@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -15,11 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('farmers', function (Blueprint $table) {
-            $table->id();
+            $table->id()->startingValue(300);
             $table->integer('contact')->unique();
-            $table->string('location');
-            $table->string('address');
-            $table->string('profile');
+            $table->string('location')->nullable();
+            $table->string('address')->nullable();
+            $table->string('profile')->nullable();
             $table->timestamps();
 
         });

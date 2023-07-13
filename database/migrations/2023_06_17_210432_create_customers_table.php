@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -15,15 +14,16 @@ return new class extends Migration
     public function up()
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->id();
+            $table->id()->startingValue(200);
             $table->integer('contact')->unique();
-            $table->string('location');
-            $table->string('home_address');
-            $table->string('profile');
+            $table->string('location')->nullable();
+            $table->string('address')->nullable();
+            $table->string('profile')->nullable();
             $table->timestamps();
+
         });
 
-        DB::update("ALTER TABLE customers AUTO_INCREMENT=101; ");
+        DB::update("ALTER TABLE customers AUTO_INCREMENT=501; ");
     }
 
     /**

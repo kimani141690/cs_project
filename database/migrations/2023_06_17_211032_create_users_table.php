@@ -13,13 +13,13 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->bigInteger('farmers_id')->nullable()->unsigned();
-            $table->bigInteger('customers_id')->nullable()->unsigned();
-            $table->enum('role', ['Farmer', 'Customer'])->default('Customer');
+            $table->id()->startingValue(100);
             $table->string('username');
             $table->string('email')->unique();
             $table->string('password');
+            $table->bigInteger('farmers_id')->nullable()->unsigned();
+            $table->bigInteger('customers_id')->nullable()->unsigned();
+            $table->enum('role', ['Admin', 'Farmer', 'Customer'])->default('Admin');
             $table->timestamp('email_verified_at')->nullable();
             $table->enum('account_status', ['activated', 'inactive', 'blocked'])->default('inactive');
             $table->string('google_id')->nullable();
