@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost&display=swap');
+body {
+    font-family: 'Jost', sans-serif;
+    background-color: white;
+    text-align: center;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    background-color: #5AA46F;
+    padding: 0 12%;
+    height: 60px;
+    align-items: center;
+}
+
+.logo {
+    margin-left: -15%; /* move the logo 5% to the left */
+}
+
+.logo img {
+    height: 100px; /* adjust as needed */
+    width: 105; /* keep the aspect ratio */
+}
+
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    color: white;
+    width: 60%;
+}
+
+nav ul li {
+    position: relative;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    color: #ccc;
+}
+
+nav ul li ul {
+    display: none;
+    position: absolute;
+    background-color: #5AA46F;
+    padding: 0;
+    margin: 0;
+    border-radius: 0 0 10px 10px;
+    box-sizing: border-box;
+    width: 220%;
+}
+
+nav ul li ul li {
+    display: block;
+    text-align: left;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+nav ul li ul li:hover {
+    background-color: #3f8a57;
+}
+
+nav ul li:hover ul {
+    display: block;
+}
+
+nav ul li:hover {
+    background-color: #3f8a57;
+}
+
+h1, h2 {
+    color: #1995AD;
+}
+
+p{
+    font-family: 'Jost', sans-serif;
+    font-size: 20px;
+
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+}
+
+/* Remove the text decoration from the links and inherit the color from the parent element */
+.container a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Display the boxes as block and align text to the center */
+.container a .box {
+    display: block;
+    text-align: center;
+}
+
+/* Style the color boxes with a border, border radius, box shadow, padding, background color, and color */
+.color-box {
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px grey;
+    padding: 20px;
+    background-color: #5AA46F;
+    color: white;
+    width: 300px; /* set a specific width */
+    height: 140px; /* set a specific height */
+    transition: transform 0.3s; /* add a transition for the transform property */
+}
+
+.label{
+    font-family: 'Jost', sans-serif;
+    font-size: 20px;
+}
+
+/* Increase the box shadow of boxes on hover and scale them up */
+.box:hover {
+    transform: scale(1.1); /* scale the box up to 110% */
+}
