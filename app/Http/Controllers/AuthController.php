@@ -87,63 +87,26 @@ class AuthController extends Controller
     public function registration(Request $request)
     {
         $user_type = $request->input('user_type');
-//        $existinguser = User::where('email', $request->input('email'))->exists();
+        $existinguser = User::where('email', $request->input('email'))->exists();
 
-        if ($user_type == 'farmer') {
-            $existingfarmer = farmers::where('email', $request->input('email'))->exists();
-
-
-            if (!$existingfarmer) {
-//                // Create and save the new user
-//                $user = new User();
-//                $user->email = $request->input('email');
-//                $user->username = $request->input('username');
-//                $user->role = 'Farmer';
-//                $password = $request->input('username') . '_smart_farmer_user';
-//                $user->password = Hash::make($password);
-//                $user->save();
-//                $userID = DB::getPdo()->lastInsertId();
-//                DB::table('password_resets')
-//                    ->insert([
-//                        'token' => str::random(60),
-//                        'user_id' => $userID,
-//                    ]);
-
+            if (!$existinguser) {
                 // Create and save the new user
-                $farmer = new Farmer();
-                $farmer->email = $request->input('email');
-                $farmer->username = $request->input('username');
+                $user = new User();
+                $user->email = $request->input('email');
+                $user->username = $request->input('username');
+                if($user_type == 'Customer'){
+
+                    $user->role = 'Customer';
+
+                }
+                else{
+
+                    $user->role = 'Farmer';
+
+                }
                 $password = $request->input('username') . '_smart_farmer_user';
-                $farmer->password = Hash::make($password);
-                $farmer->save();
-                $userID = DB::getPdo()->lastInsertId();
-                DB::table('password_resets')
-                    ->insert([
-                        'token' => str::random(60),
-                        'user_id' => $userID,
-                    ]);
-                Mail::to($request->input('email'))->send(new RegistrationMail($userID));
-
-                return redirect('/auth/login')->withErrors(
-                    ['msg' => 'Registration completed successfully. Kindly Check your email for further instructions']
-                );
-
-            } else {
-                return redirect('/auth/login')->with('message', 'An account with that email already exists. Please login to proceed.');
-            }
-        } elseif ($user_type == 'customer') {
-
-            $existingCustomer = customers::where('email', $request->input('email'))->exists();
-
-            if (!$existingCustomer) {
-
-                // Create and save the new user
-                $customer = new Customer();
-                $customer->email = $request->input('email');
-                $customer->username = $request->input('username');
-                $password = $request->input('username') . '_smart_farmer_user';
-                $customer->password = Hash::make($password);
-                $customer->save();
+                $user->password = Hash::make($password);
+                $user->save();
 
                 $userID = DB::getPdo()->lastInsertId();
                 DB::table('password_resets')
@@ -157,38 +120,13 @@ class AuthController extends Controller
                     ['msg' => 'Registration completed successfully. Kindly Check your email for further instructions']
                 );
 
-//            if (!$existinguser) {
-//                // Create and save the new user
-//                $user = new User();
-//                $user->email = $request->input('email');
-//                $user->username = $request->input('username');
-//                $user->role = 'Customer';
-//                $password = $request->input('username') . '_smart_farmer_user';
-//                $user->password = Hash::make($password);
-//                $user->save();
-//
-//                $userID = DB::getPdo()->lastInsertId();
-//                DB::table('password_resets')
-//                    ->insert([
-//                        'token' => str::random(60),
-//                        'user_id' => $userID,
-//                    ]);
-//                Mail::to($request->input('email'))->send(new RegistrationMail($userID));
-//
-//                return redirect('/auth/login')->withErrors(
-//                    ['msg' => 'Registration completed successfully. Kindly Check your email for further instructions']
-//                );
-
-            } else {
+            }
+            else {
                 return redirect('/auth/login')->with('message', 'An account with that email already exists. Please login to proceed.');
 
             }
 
-        } else {
-            abort(404);
         }
-    }
-
     //3. reset passwords
     //the bellow method is to send an email for when the user request a password reset action
     public function sendPasswordRequestMail(Request $request)
@@ -210,54 +148,16 @@ class AuthController extends Controller
     {
         $new_password = Hash::make($request->input('new_password'));
         $token_info = PasswordReset::all()->where('token', '=', $request->input('token'))->first();
-        $user_id = $token_info->user_id;
-// Check if user_id begins with a digit 5
-        if (strpos((string)$user_id, '5') === 0) {
-            $customer_update = Customers::where('id', $user_id)->first();
-
-            if ($customer_update) {
-                // Update customer password
-                $customer_update->password = $new_password;
-                $customer_update->save();
-
-                // Update account status
-                $customer_update->account_status = 'activated';
-                $customer_update->save();
-
-                return redirect('/auth/login')->withErrors(['msg' => 'Password Reset Successfully. Your Account has been activated']);
+//        $user_id = $token_info->user_id;
+        $user_update = new User();
+       $user_update->password = $new_password;
+        $user_update->email_verified_at = Carbon::now();
+       $user_update->update();
 
 
-            }
-            elseif (strpos((string)$user_id, '1') === 0) {
-            // User_id begins with a digit 1
-                $farmer_update = Farmer::where('id', $user_id)->first();
-
-                if ($farmer_update) {
-                    // Update customer password
-                    $farmer_update->password = $new_password;
-                    $farmer_update->save();
-
-                    // Update account status
-                    $farmer_update->account_status = 'activated';
-                    $farmer_update->save();
-
-                    return redirect('/auth/login')->withErrors(['msg' => 'Password Reset Successfully. Your Account has been activated']);
-
-
-                }
-            }
-            else {
-            // User_id does not begin with a digit 5 or 1
-            // Handle the condition where the user_id does not meet the requirements
-            echo "User account does not exist";
-        }
-
-
-//        $user_update->password = $new_password;
-//        $user_update->email_verified_at = Carbon::now();
-//        $user_update->update();
     }
-    }
+
+
 
     //4. logout
     public function logout(Request $request)

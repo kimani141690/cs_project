@@ -1,78 +1,80 @@
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
+@include('_sidebar')
 
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach($products as $product)
+    <tr>
+        <td>{{ $product->name }}</td>
+        <td>{{ $product->description }}</td>
+        <td>{{ $product->quantity }}</td>
+        <td>{{ $product->price }}</td>
+        <td>
+            <a href="#" data-toggle="modal" data-target="#editModal{{ $product->id }}">Edit</a>
+            <form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display: inline-block;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" onclick="return confirm('Are you sure you want to delete this product?')">Delete</button>
+            </form>
+        </td>
+    </tr>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Agri-Bizz : Products</title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
-    <link href="bootstrap\css\bootstrap.min.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="bootstrap\js\bootstrap.min.js"></script>
-    <!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
-    <link rel="stylesheet" href="login.css"/>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/skel.min.js"></script>
-    <script src="js/skel-layers.min.js"></script>
-    <script src="js/init.js"></script>
-    <noscript>
-        <link rel="stylesheet" href="css/skel.css" />
-        <link rel="stylesheet" href="css/style.css" />
-        <link rel="stylesheet" href="css/style-xlarge.css" />
-    </noscript>
-    <link rel="stylesheet" href="indexfooter.css" />
-    <!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
-</head>
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal{{ $product->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ $product->id }}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel{{ $product->id }}">Edit Product</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Update Product Form -->
+                    <form action="{{ route('products.update', $product->id) }}" method="POST" id="updateForm{{ $product->id }}">
+                        @csrf
+                        @method('PUT')
+                        <!-- Add form fields here for the product attributes you want to update -->
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ $product->name }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description" required>{{ $product->description }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" value="{{ $product->quantity }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price</label>
+                            <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ $product->price }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Edit Modal -->
+    @endforeach
+    </tbody>
+</table>
 
-<body>
-
-<div class="container">
-    <h2 style="font: 30px 'Akaya Telivigala', cursive">Products</h2>
-    <table class="table">
-        <thead>
-        <tr style="font: 20px 'Akaya Telivigala', cursive;font-weight: 900">
-            <th> Seller ID</th>
-            <th>Product ID</th>
-            <th>Product Name</th>
-            <th>Product Category</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php
-        if ($result->num_rows > 0) {
-            //output data of each row
-            while ($row = $result->fetch_assoc()) {
-                ?>
-
-                <tr>
-                    <td><?php echo $row['fid']; ?></td>
-                    <td><?php echo $row['pid']; ?></td>
-                    <td><?php echo $row['product']; ?></td>
-                    <td><?php echo $row['pcat']; ?></td>
-                    <td><?php echo $row['pinfo']; ?></td>
-                    <td><?php echo $row['price']; ?></td>
-                    <td><a class="btn btn-danger" href="deleteProduct.php?pid=<?php echo $row['pid']; ?>">Delete</a></td>
-                </tr>
-
-            <?php		}
-        }
-        ?>
-
-        </tbody>
-    </table>
-</div>
-
-</body>
-</html>
+<script>
+    // Close modal after successful form submission
+    @foreach($products as $product)
+    document.getElementById('updateForm{{ $product->id }}').addEventListener('submit', function() {
+        $('#editModal{{ $product->id }}').modal('hide');
+    });
+    @endforeach
+</script>
